@@ -1,0 +1,18 @@
+version: "3"
+services:
+  books-mysql:
+    container_name: "books-mysql"
+    hostname: "mysql"
+    image: mysql/mysql-server:8.0.15
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: books
+      MYSQL_USER: books
+      MYSQL_PASSWORD: books
+    ports:
+      - 3306:3306
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_general_ci",
+      ]
