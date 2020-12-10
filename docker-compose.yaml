@@ -10,7 +10,7 @@ services:
       MYSQL_USER: books
       MYSQL_PASSWORD: books
     ports:
-      - 3306:3306
+      - 3309:3306
     command:
       [
         "--character-set-server=utf8mb4",

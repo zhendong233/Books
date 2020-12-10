@@ -1,0 +1,44 @@
+package testutil
+
+import (
+	"database/sql"
+	"fmt"
+	"sync"
+	"testing"
+	"time"
+
+	"github.com/DATA-DOG/go-txdb"
+	_ "github.com/go-sql-driver/mysql" // mysql
+
+	"github.com/zhendong233/Books/pkg/dbutil"
+)
+
+var (
+	driverName  = "mysql"
+	TestConn    = fmt.Sprintf("%s:%s@tcp(localhost:%d)/%s", dbutil.User, dbutil.Pass, dbutil.Port, dbutil.DB)
+	TestConnStr = TestConn + `?charset=utf8mb4&parseTime=True&loc=UTC&tls=false&multiStatements=true`
+)
+
+var txDBRegisterOnce sync.Once
+
+func registerDB() {
+	txdb.Register("test-mysql", driverName, TestConnStr)
+}
+
+func PrepareMySQL(t *testing.T) *sql.DB {
+	t.Helper()
+	txDBRegisterOnce.Do(registerDB)
+	cName := fmt.Sprintf("connection_%d", time.Now().UnixNano()) // 时间戳（纳秒) 毫秒的话可以使用UnixNano() / 1e6
+	db, err := sql.Open("test-mysql", cName)
+	if err != nil {
+		t.Fatalf("failed to open test-mysql connection: %s", err)
+	}
+	return db
+}
+
+func SetFakeTimeForMysql(t *testing.T, db *sql.DB, fakeTime time.Time) {
+	t.Helper()
+	if _, err := db.Exec("SET TIMESTAMP = ?", fakeTime.Unix()); err != nil {
+		t.Fatal(err)
+	}
+}

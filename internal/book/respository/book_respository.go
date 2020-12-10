@@ -22,3 +22,12 @@ func NewBookRespository(db *sql.DB) *bookRespository {
 		db: sqlx.NewDb(db, "mysql"),
 	}
 }
+
+func (r *bookRespository) FindByID(ctx context.Context, bookID string) (*model.Book, error) {
+	const q = "SELECT * FROM book WHERE id = ?"
+	var book model.Book
+	if err := r.db.SelectContext(ctx, &book, q, bookID); err != nil {
+		return nil, err
+	}
+	return &book, nil
+}
