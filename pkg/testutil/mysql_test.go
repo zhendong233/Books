@@ -22,6 +22,6 @@ func Test_SetFakeTimeForMysql(t *testing.T) {
 		t.Errorf("select error %s", err)
 	}
 	if err == nil && actual != TestTime {
-		t.Error("failure at set TIMESTAMP")
+		t.Error("failure at set TIMESTAMP", actual, TestTime)
 	}
 }
