@@ -24,9 +24,9 @@ func NewBookRespository(db *sql.DB) *bookRespository {
 }
 
 func (r *bookRespository) FindByID(ctx context.Context, bookID string) (*model.Book, error) {
-	const q = "SELECT * FROM book WHERE id = ?"
+	const q = "SELECT book_id, book_name, author, created_at FROM book WHERE book_id = ?"
 	var book model.Book
-	if err := r.db.SelectContext(ctx, &book, q, bookID); err != nil {
+	if err := r.db.QueryRowxContext(ctx, q, bookID).StructScan(&book); err != nil {
 		return nil, err
 	}
 	return &book, nil
