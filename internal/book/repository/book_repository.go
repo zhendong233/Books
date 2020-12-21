@@ -1,4 +1,6 @@
-package respository
+package repository
+
+//go:generate mockgen -source=$GOFILE -destination=../mock/mock_$GOPACKAGE/mock_$GOFILE
 
 import (
 	"context"
@@ -9,21 +11,21 @@ import (
 	"github.com/zhendong233/Books/internal/book/model"
 )
 
-type BookRespository interface {
+type BookRepository interface {
 	FindByID(ctx context.Context, bookID string) (*model.Book, error)
 }
 
-type bookRespository struct {
+type bookRepository struct {
 	db *sqlx.DB
 }
 
-func NewBookRespository(db *sql.DB) *bookRespository {
-	return &bookRespository{
+func NewBookRepository(db *sql.DB) *bookRepository {
+	return &bookRepository{
 		db: sqlx.NewDb(db, "mysql"),
 	}
 }
 
-func (r *bookRespository) FindByID(ctx context.Context, bookID string) (*model.Book, error) {
+func (r *bookRepository) FindByID(ctx context.Context, bookID string) (*model.Book, error) {
 	const q = "SELECT book_id, book_name, author, created_at FROM book WHERE book_id = ?"
 	var book model.Book
 	if err := r.db.QueryRowxContext(ctx, q, bookID).StructScan(&book); err != nil {

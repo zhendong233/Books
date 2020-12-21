@@ -1,4 +1,4 @@
-package respository
+package repository
 
 import (
 	"context"
@@ -11,24 +11,24 @@ import (
 	"github.com/zhendong233/Books/pkg/testutil"
 )
 
-type testRespository struct {
+type testRepository struct {
 	db  *sql.DB
 	ctx context.Context
-	r   BookRespository
+	r   BookRepository
 }
 
-func newTestRespository(t *testing.T) *testRespository {
+func newTestRepository(t *testing.T) *testRepository {
 	if testing.Short() {
 		t.Skip()
 	}
 	db := testutil.PrepareMySQL(t)
 	ctx := context.Background()
-	r := NewBookRespository(db)
+	r := NewBookRepository(db)
 	testutil.SetFakeTimeForMysql(t, db, testutil.TestTime)
 	t.Cleanup(func() {
 		_ = db.Close()
 	})
-	return &testRespository{
+	return &testRepository{
 		db:  db,
 		ctx: ctx,
 		r:   r,
@@ -63,7 +63,7 @@ func Test_FindByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tbr := newTestRespository(t)
+			tbr := newTestRepository(t)
 			testutil.ExecSQLFile(t, tbr.db, "./testdata/test_repository.sql")
 			got, err := tbr.r.FindByID(tbr.ctx, tt.bookID)
 			if (err != nil) != tt.wantErr {
