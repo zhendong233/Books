@@ -13,10 +13,16 @@ type booksError struct {
 	msg    string
 }
 
-func New(code Code, message string) error {
+var (
+	// 判断struct是否实现了interface没实现的话编译时会报错
+	_ Error = (*booksError)(nil)
+)
+
+func New(err error, code Code, message string) error {
 	return &booksError{
-		code: code,
-		msg:  message,
+		origin: err,
+		code:   code,
+		msg:    message,
 	}
 }
 
