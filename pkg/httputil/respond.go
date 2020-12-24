@@ -3,13 +3,25 @@ package httputil
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/rs/zerolog/log"
+	"github.com/zhendong233/Books/pkg/bookserr"
 )
 
 func RespondError(ctx context.Context, w http.ResponseWriter, err error) {
-
+	var booksErr bookserr.Error
+	if errors.As(err, &booksErr) {
+		status := ErrorToStatus(booksErr.Code())
+		if 500 <= status {
+			log.Ctx(ctx).Error().Err(booksErr).Send()
+		} else {
+			log.Ctx(ctx).Error().Err(booksErr).Send()
+		}
+		respondJSON(ctx, w, status, booksErr)
+	}
+	respondJSON(ctx, w, http.StatusInternalServerError, err)
 }
 
 func RespondJSON(ctx context.Context, w http.ResponseWriter, status int, payload interface{}) {

@@ -23,7 +23,7 @@ type Code interface {
 }
 
 func (c code) String() string {
-	return fmt.Sprintf("books-%03d", c)
+	return fmt.Sprintf("books-%02d", c)
 }
 
 func (c code) MarshalJSON() ([]byte, error) {

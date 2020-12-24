@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/zhendong233/Books/internal/book/service"
+	"github.com/zhendong233/Books/pkg/httputil"
 )
 
 type BookController interface {
@@ -24,8 +25,10 @@ func NewBookController(bs service.BookService) BookController {
 func (c *bookController) GetBook(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	spaceID := chi.URLParam(r, "bookId")
-	_, err := c.bs.FindByID(ctx, spaceID)
+	res, err := c.bs.FindByID(ctx, spaceID)
 	if err != nil {
-
+		httputil.RespondError(ctx, w, err)
+		return
 	}
+	httputil.RespondJSON(ctx, w, http.StatusOK, res)
 }
