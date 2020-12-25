@@ -1,5 +1,7 @@
 package controller
 
+//go:generate mockgen -source=$GOFILE -destination=../mock/mock_$GOPACKAGE/mock_$GOFILE
+
 import (
 	"net/http"
 

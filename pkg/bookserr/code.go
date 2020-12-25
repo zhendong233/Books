@@ -2,7 +2,6 @@ package bookserr
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 )
 
@@ -31,8 +30,16 @@ func (c code) MarshalJSON() ([]byte, error) {
 }
 
 func As(err error, c Code) bool {
-	var booksErr Error
-	if errors.As(err, &booksErr) && booksErr.Code() == c {
+	//var booksErr Error
+	// if errors.As(err, &booksErr) && booksErr.Code() == c {
+	// 	return true
+	// }
+	//使用断言的方式判断err是不是Error接口类型的
+	booksErr, ok := err.(Error)
+	if !ok {
+		return false
+	}
+	if booksErr.Code() == c {
 		return true
 	}
 	return false
