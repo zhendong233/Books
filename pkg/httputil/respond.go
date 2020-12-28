@@ -15,13 +15,16 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) {
 	if errors.As(err, &booksErr) {
 		status := ErrorToStatus(booksErr.Code())
 		if 500 <= status {
-			log.Ctx(ctx).Error().Err(booksErr).Send()
+			log.Error().Err(booksErr)
 		} else {
-			log.Ctx(ctx).Error().Err(booksErr).Send()
+			log.Warn().Err(booksErr)
 		}
 		respondJSON(ctx, w, status, booksErr)
+		return
 	}
-	respondJSON(ctx, w, http.StatusInternalServerError, err)
+	var unexpectedError = bookserr.New(err, bookserr.Unexpected, err.Error())
+	log.Error().Err(booksErr)
+	respondJSON(ctx, w, http.StatusInternalServerError, unexpectedError)
 }
 
 func RespondJSON(ctx context.Context, w http.ResponseWriter, status int, payload interface{}) {
@@ -38,7 +41,7 @@ func respondJSON(ctx context.Context, w http.ResponseWriter, status int, payload
 	}
 	w.WriteHeader(status)
 	if _, err := w.Write(b); err != nil {
-		log.Ctx(ctx).Error().Err(err).Send()
+		log.Error().Err(err)
 	}
 }
 

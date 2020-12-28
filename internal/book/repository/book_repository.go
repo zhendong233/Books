@@ -19,7 +19,7 @@ type bookRepository struct {
 	db *sqlx.DB
 }
 
-func NewBookRepository(db *sql.DB) *bookRepository {
+func NewBookRepository(db *sql.DB) BookRepository {
 	return &bookRepository{
 		db: sqlx.NewDb(db, "mysql"),
 	}

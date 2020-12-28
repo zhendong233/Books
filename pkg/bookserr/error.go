@@ -8,9 +8,9 @@ type Error interface {
 }
 
 type booksError struct {
-	origin error
-	code   Code
-	msg    string
+	Origin  error  `json:"-"`
+	ErrCode Code   `json:"code"`
+	Msg     string `json:"msg"`
 }
 
 var (
@@ -18,21 +18,21 @@ var (
 	_ Error = (*booksError)(nil)
 )
 
-func New(err error, code Code, message string) error {
+func New(err error, code Code, message string) *booksError {
 	return &booksError{
-		origin: err,
-		code:   code,
-		msg:    message,
+		Origin:  err,
+		ErrCode: code,
+		Msg:     message,
 	}
 }
 
 func (e *booksError) Error() string {
-	if e.origin == nil {
-		return fmt.Sprintf("code=%s, msg=%s", e.code, e.msg)
+	if e.Origin == nil {
+		return fmt.Sprintf("code=%s, msg=%s", e.ErrCode, e.Msg)
 	}
-	return fmt.Sprintf("originType=%T, origin=%s, code=%s, msg=%s", e.origin, e.origin.Error(), e.code, e.msg)
+	return fmt.Sprintf("originType=%T, origin=%s, code=%s, msg=%s", e.Origin, e.Origin.Error(), e.ErrCode, e.Msg)
 }
 
 func (e *booksError) Code() Code {
-	return e.code
+	return e.ErrCode
 }

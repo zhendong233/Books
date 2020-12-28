@@ -1,12 +1,14 @@
 package book
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/rs/zerolog/log"
 )
 
 type Master interface {
@@ -14,16 +16,28 @@ type Master interface {
 }
 
 type master struct {
-	r BookRouter
+	db *sql.DB
+	r  BookRouter
 }
 
-func NewMaster(r BookRouter) Master {
+func NewMaster(db *sql.DB, r BookRouter) Master {
 	return &master{
-		r: r,
+		r:  r,
+		db: db,
 	}
 }
 
 func (m *master) Run() {
+	if err := m.run(); err != nil {
+		log.Print(err)
+		os.Exit(-1)
+	}
+}
+
+func (m *master) run() error {
+	defer func() {
+		_ = m.db.Close()
+	}()
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
@@ -34,6 +48,7 @@ func (m *master) Run() {
 	fmt.Println("Server listen at :8005")
 	err := http.ListenAndServe(":8005", r)
 	if err != nil {
-		os.Exit(-1)
+		return err
 	}
+	return nil
 }

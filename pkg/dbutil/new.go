@@ -3,7 +3,8 @@ package dbutil
 import (
 	"database/sql"
 	"fmt"
-	"os"
+
+	_ "github.com/go-sql-driver/mysql" // mysql
 )
 
 var (
@@ -11,10 +12,10 @@ var (
 	ConnStr = Conn + `?charset=utf8mb4&parseTime=True&loc=UTC&tls=false&multiStatements=true`
 )
 
-func NewDB() *sql.DB {
+func NewDB() (*sql.DB, error) {
 	d, err := sql.Open("mysql", ConnStr)
 	if err != nil {
-		os.Exit(-1)
+		return nil, err
 	}
-	return d
+	return d, nil
 }

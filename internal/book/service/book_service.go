@@ -4,11 +4,11 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/zhendong233/Books/internal/book/model"
 	"github.com/zhendong233/Books/internal/book/repository"
 	"github.com/zhendong233/Books/pkg/books"
+	"github.com/zhendong233/Books/pkg/bookserr"
 	"github.com/zhendong233/Books/pkg/session"
 )
 
@@ -27,9 +27,10 @@ func NewBookService(br repository.BookRepository) BookService {
 }
 
 func (s *bookService) FindByID(ctx context.Context, bookID string) (*model.Book, error) {
+	ctx = session.SetUserID(ctx, books.DefaultAdmin)
 	userID := session.UserID(ctx)
 	if userID != books.DefaultAdmin {
-		return nil, errors.New("this user can not find book")
+		return nil, bookserr.New(nil, bookserr.Unauthorized, "user can not find")
 	}
 	return s.br.FindByID(ctx, bookID)
 }
