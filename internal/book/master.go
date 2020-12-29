@@ -9,6 +9,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/rs/zerolog/log"
+
+	booksmiddle "github.com/zhendong233/Books/pkg/middleware"
 )
 
 type Master interface {
@@ -42,7 +44,7 @@ func (m *master) run() error {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
 	r.Route("/", func(rt chi.Router) {
-		rt.Mount("/books", m.r.Handler())
+		rt.Mount("/books", booksmiddle.SetFakeSession(m.r.Handler()))
 	})
 
 	fmt.Println("Server listen at :8005")

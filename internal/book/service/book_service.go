@@ -27,7 +27,6 @@ func NewBookService(br repository.BookRepository) BookService {
 }
 
 func (s *bookService) FindByID(ctx context.Context, bookID string) (*model.Book, error) {
-	ctx = session.SetUserID(ctx, books.DefaultAdmin)
 	userID := session.UserID(ctx)
 	if userID != books.DefaultAdmin {
 		return nil, bookserr.New(nil, bookserr.Unauthorized, "user can not find")

@@ -33,7 +33,6 @@ func RespondJSON(ctx context.Context, w http.ResponseWriter, status int, payload
 
 func respondJSON(ctx context.Context, w http.ResponseWriter, status int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	// json.Encoderを使うとEncode時にエラーが発生してもstatus codeを変えられないのでjson.Marshalを使う
 	b, err := json.Marshal(payload)
 	if err != nil {
 		RespondError(ctx, w, err)
