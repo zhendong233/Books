@@ -20,7 +20,7 @@ func WireBuild() (Master, error) {
 		return nil, err
 	}
 	bookRepository := repository.NewBookRepository(db)
-	bookService := service.NewBookService(bookRepository)
+	bookService := service.NewBookService(bookRepository, db)
 	bookController := controller.NewBookController(bookService)
 	bookBookRouter := NewRouter(bookController)
 	bookMaster := NewMaster(db, bookBookRouter)

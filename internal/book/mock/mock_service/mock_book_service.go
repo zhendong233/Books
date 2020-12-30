@@ -48,3 +48,18 @@ func (mr *MockBookServiceMockRecorder) FindByID(ctx, bookID interface{}) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockBookService)(nil).FindByID), ctx, bookID)
 }
+
+// CreateBook mocks base method
+func (m *MockBookService) CreateBook(ctx context.Context, book *model.Book) (*model.Book, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateBook", ctx, book)
+	ret0, _ := ret[0].(*model.Book)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateBook indicates an expected call of CreateBook
+func (mr *MockBookServiceMockRecorder) CreateBook(ctx, book interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBook", reflect.TypeOf((*MockBookService)(nil).CreateBook), ctx, book)
+}

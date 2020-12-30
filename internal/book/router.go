@@ -24,6 +24,7 @@ func NewRouter(controller controller.BookController) BookRouter {
 func (br *bookRouter) Handler() http.Handler {
 	mux := chi.NewRouter()
 	mux.Route("/", func(r chi.Router) {
+		r.Post("/", br.controller.CreateBook)
 		r.Get("/{bookId}", br.controller.GetBook)
 	})
 	return mux
