@@ -73,3 +73,54 @@ func Test_FindByID(t *testing.T) {
 		})
 	}
 }
+
+func Test_Upsert(t *testing.T) {
+	book := &model.Book{
+		BookID:    testutil.TestBookID,
+		BookName:  "改名了",
+		Author:    "改名了",
+		CreatedAt: testutil.TestTime,
+	}
+	newBook := &model.Book{
+		BookID:    "book-id-1",
+		BookName:  "最新书",
+		Author:    "刘某某",
+		CreatedAt: testutil.TestTime,
+	}
+	tests := []struct {
+		name    string
+		book    *model.Book
+		want    *model.Book
+		wantErr bool
+	}{
+		{
+			name:    "ok: insert new book",
+			book:    newBook,
+			want:    newBook,
+			wantErr: false,
+		},
+		{
+			name:    "ok: update the book",
+			book:    book,
+			want:    book,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tbr := newTestRepository(t)
+			testutil.ExecSQLFile(t, tbr.db, "./testdata/test_repository.sql")
+			tx := testutil.BeginTx(t, tbr.db)
+			if err := tbr.r.Upsert(tbr.ctx, tx, tt.book); err != nil {
+				testutil.RollBackTx(t, tx)
+				t.Fatal(err)
+			}
+			testutil.CommitTx(t, tx)
+			got, err := tbr.r.FindByID(tbr.ctx, tt.book.BookID)
+			if (err != nil) != tt.wantErr {
+				t.Fatal(err)
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}

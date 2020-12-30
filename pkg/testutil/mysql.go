@@ -60,3 +60,27 @@ func ExecSQLFile(t *testing.T, db *sql.DB, filePaths ...string) {
 		}
 	}
 }
+
+func BeginTx(t *testing.T, db *sql.DB) *sql.Tx {
+	t.Helper()
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tx
+}
+
+func CommitTx(t *testing.T, tx *sql.Tx) {
+	t.Helper()
+	if err := tx.Commit(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func RollBackTx(t *testing.T, tx *sql.Tx) {
+	t.Helper()
+	if err := tx.Rollback(); err != nil {
+		t.Fatal(err)
+	}
+}

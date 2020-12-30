@@ -13,6 +13,7 @@ import (
 
 type BookRepository interface {
 	FindByID(ctx context.Context, bookID string) (*model.Book, error)
+	Upsert(ctx context.Context, tx *sql.Tx, book *model.Book) error
 }
 
 type bookRepository struct {
@@ -32,4 +33,14 @@ func (r *bookRepository) FindByID(ctx context.Context, bookID string) (*model.Bo
 		return nil, err
 	}
 	return &book, nil
+}
+
+func (r *bookRepository) Upsert(ctx context.Context, tx *sql.Tx, book *model.Book) error {
+	const q = `INSERT INTO book (book_id, book_name, author, created_at) 
+VALUES (?, ?, ?, NOW(3)) ON DUPLICATE KEY UPDATE book_name = ?, author = ?, created_at = NOW(3)`
+	if _, err := tx.ExecContext(ctx, q, book.BookID, book.BookName,
+		book.Author, book.BookName, book.Author); err != nil {
+		return err
+	}
+	return nil
 }

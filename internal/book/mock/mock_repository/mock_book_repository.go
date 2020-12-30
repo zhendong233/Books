@@ -6,6 +6,7 @@ package mock_repository
 
 import (
 	context "context"
+	sql "database/sql"
 	gomock "github.com/golang/mock/gomock"
 	model "github.com/zhendong233/Books/internal/book/model"
 	reflect "reflect"
@@ -47,4 +48,18 @@ func (m *MockBookRepository) FindByID(ctx context.Context, bookID string) (*mode
 func (mr *MockBookRepositoryMockRecorder) FindByID(ctx, bookID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockBookRepository)(nil).FindByID), ctx, bookID)
+}
+
+// Upsert mocks base method
+func (m *MockBookRepository) Upsert(ctx context.Context, tx *sql.Tx, book *model.Book) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Upsert", ctx, tx, book)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Upsert indicates an expected call of Upsert
+func (mr *MockBookRepositoryMockRecorder) Upsert(ctx, tx, book interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockBookRepository)(nil).Upsert), ctx, tx, book)
 }
