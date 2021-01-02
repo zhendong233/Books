@@ -62,6 +62,15 @@ func Test_GetBook(t *testing.T) {
 			wantErr:    false,
 			wantBody:   book,
 		},
+		{
+			name: "ng",
+			expect: func(tbc *testController) {
+				tbc.bs.EXPECT().FindByID(gomock.Any(), testutil.TestBookID).Return(nil, testutil.TestErr)
+			},
+			wantStatus: http.StatusInternalServerError,
+			wantErr:    true,
+			wantBody:   nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -106,6 +115,15 @@ func Test_CreateBook(t *testing.T) {
 			wantErr:    false,
 			wantBody:   bookResult,
 		},
+		{
+			name: "ng",
+			expect: func(tbc *testController) {
+				tbc.bs.EXPECT().CreateBook(gomock.Any(), book).Return(nil, testutil.TestErr)
+			},
+			wantStatus: http.StatusInternalServerError,
+			wantErr:    true,
+			wantBody:   nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,6 +135,67 @@ func Test_CreateBook(t *testing.T) {
 			}
 			tbc.mux.Post("/book", tbc.bc.CreateBook)
 			rec, req := testutil.NewRequestAndRecorder("POST", "/book", buf)
+			tbc.mux.ServeHTTP(rec, req)
+			assert.Equal(t, tt.wantStatus, rec.Code)
+			if !tt.wantErr {
+				testutil.AssertResponseBody(t, tt.wantBody, rec.Body)
+			}
+		})
+	}
+}
+
+func Test_UpdateBook(t *testing.T) {
+	bookID := "book-id-1"
+	b := &model.BookToUpdate{
+		BookName: "改名",
+		Author:   "改名",
+	}
+	book := &model.Book{
+		BookName: "改名",
+		Author:   "改名",
+	}
+	bookResult := &model.Book{
+		BookID:    "book-id-1",
+		BookName:  "改名",
+		Author:    "改名",
+		CreatedAt: testutil.TestTime,
+	}
+	tests := []struct {
+		name       string
+		expect     func(tbc *testController)
+		wantStatus int
+		wantErr    bool
+		wantBody   *model.Book
+	}{
+		{
+			name: "ok",
+			expect: func(tbc *testController) {
+				tbc.bs.EXPECT().UpdateBook(gomock.Any(), bookID, book).Return(bookResult, nil)
+			},
+			wantStatus: http.StatusOK,
+			wantErr:    false,
+			wantBody:   bookResult,
+		},
+		{
+			name: "ng",
+			expect: func(tbc *testController) {
+				tbc.bs.EXPECT().UpdateBook(gomock.Any(), bookID, book).Return(nil, testutil.TestErr)
+			},
+			wantStatus: http.StatusInternalServerError,
+			wantErr:    true,
+			wantBody:   nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tbc := newTestController(t)
+			tt.expect(tbc)
+			buf := new(bytes.Buffer)
+			if err := json.NewEncoder(buf).Encode(b); err != nil {
+				t.Fatal(err)
+			}
+			tbc.mux.Put("/book/{bookId}", tbc.bc.UpdateBook)
+			rec, req := testutil.NewRequestAndRecorder("PUT", "/book/"+bookID, buf)
 			tbc.mux.ServeHTTP(rec, req)
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if !tt.wantErr {

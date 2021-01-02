@@ -120,3 +120,53 @@ func Test_CreateBook(t *testing.T) {
 		})
 	}
 }
+
+func Test_UpdateBook(t *testing.T) {
+	const bookID = "book-id-1"
+	b := &model.Book{
+		BookName: "改名",
+		Author:   "改名",
+	}
+	book := &model.Book{
+		BookID:    bookID,
+		BookName:  "新书",
+		Author:    "王某某",
+		CreatedAt: testutil.TestTime,
+	}
+	bookResult := &model.Book{
+		BookID:    bookID,
+		BookName:  "改名",
+		Author:    "改名",
+		CreatedAt: testutil.TestTime,
+	}
+	tests := []struct {
+		name    string
+		expect  func(tbs *testService)
+		want    *model.Book
+		wantErr bool
+	}{
+		{
+			name: "ok",
+			expect: func(tbs *testService) {
+				tbs.br.EXPECT().FindByID(gomock.Any(), bookID).Return(book, nil)
+				tbs.mockDB.ExpectBegin()
+				tbs.br.EXPECT().Upsert(gomock.Any(), gomock.Any(), bookResult).Return(nil)
+				tbs.mockDB.ExpectCommit()
+				tbs.br.EXPECT().FindByID(gomock.Any(), bookID).Return(bookResult, nil)
+			},
+			want:    bookResult,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tbs := newTestService(t)
+			tt.expect(tbs)
+			got, err := tbs.bs.UpdateBook(tbs.ctx, bookID, b)
+			if (err != nil) != tt.wantErr {
+				t.Fatal(err)
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}

@@ -63,3 +63,18 @@ func (mr *MockBookServiceMockRecorder) CreateBook(ctx, book interface{}) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBook", reflect.TypeOf((*MockBookService)(nil).CreateBook), ctx, book)
 }
+
+// UpdateBook mocks base method
+func (m *MockBookService) UpdateBook(ctx context.Context, bookID string, book *model.Book) (*model.Book, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBook", ctx, bookID, book)
+	ret0, _ := ret[0].(*model.Book)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateBook indicates an expected call of UpdateBook
+func (mr *MockBookServiceMockRecorder) UpdateBook(ctx, bookID, book interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBook", reflect.TypeOf((*MockBookService)(nil).UpdateBook), ctx, bookID, book)
+}

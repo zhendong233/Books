@@ -8,3 +8,8 @@ type Book struct {
 	Author    string    `db:"author" json:"author"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 }
+
+type BookToUpdate struct {
+	BookName string `json:"bookName"`
+	Author   string `json:"author"`
+}

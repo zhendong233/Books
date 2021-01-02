@@ -18,6 +18,7 @@ import (
 type BookService interface {
 	FindByID(ctx context.Context, bookID string) (*model.Book, error)
 	CreateBook(ctx context.Context, book *model.Book) (*model.Book, error)
+	UpdateBook(ctx context.Context, bookID string, book *model.Book) (*model.Book, error)
 }
 
 type bookService struct {
@@ -47,6 +48,30 @@ func (s *bookService) CreateBook(ctx context.Context, book *model.Book) (*model.
 	}
 	bookID := uuid.New().String()
 	book.BookID = bookID
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
+	if err != nil {
+		return nil, err
+	}
+	if err := s.br.Upsert(ctx, tx, book); err != nil {
+		return nil, tx.Rollback()
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+	return s.br.FindByID(ctx, bookID)
+}
+
+func (s *bookService) UpdateBook(ctx context.Context, bookID string, b *model.Book) (*model.Book, error) {
+	userID := session.UserID(ctx)
+	if userID != books.DefaultAdmin {
+		return nil, bookserr.New(nil, bookserr.Unauthorized, "user can not create book")
+	}
+	book, err := s.br.FindByID(ctx, bookID)
+	if err != nil {
+		return nil, err
+	}
+	book.BookName = b.BookName
+	book.Author = b.Author
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 	if err != nil {
 		return nil, err

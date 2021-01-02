@@ -15,6 +15,7 @@ import (
 type BookController interface {
 	GetBook(w http.ResponseWriter, r *http.Request)
 	CreateBook(w http.ResponseWriter, r *http.Request)
+	UpdateBook(w http.ResponseWriter, r *http.Request)
 }
 
 type bookController struct {
@@ -46,6 +47,22 @@ func (c *bookController) CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req, err := c.bs.CreateBook(ctx, &book)
+	if err != nil {
+		httputil.RespondError(ctx, w, err)
+		return
+	}
+	httputil.RespondJSON(ctx, w, http.StatusOK, req)
+}
+
+func (c *bookController) UpdateBook(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	bookID := chi.URLParam(r, "bookId")
+	var b model.Book
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		httputil.RespondError(ctx, w, err)
+		return
+	}
+	req, err := c.bs.UpdateBook(ctx, bookID, &b)
 	if err != nil {
 		httputil.RespondError(ctx, w, err)
 		return
