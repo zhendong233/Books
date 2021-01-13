@@ -11,6 +11,7 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.4.0
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/johejo/sqlbuilder v0.0.0-20201203111648-04a2700a83a6
 	github.com/rs/zerolog v1.20.0
 	github.com/stretchr/testify v1.6.1
 	google.golang.org/appengine v1.6.7 // indirect

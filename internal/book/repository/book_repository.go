@@ -14,6 +14,7 @@ import (
 type BookRepository interface {
 	FindByID(ctx context.Context, bookID string) (*model.Book, error)
 	Upsert(ctx context.Context, tx *sql.Tx, book *model.Book) error
+	// FindListByID(ctx context.Context) ([]*model.Book, error)
 }
 
 type bookRepository struct {
@@ -44,3 +45,7 @@ VALUES (?, ?, ?, NOW(3)) ON DUPLICATE KEY UPDATE book_name = ?, author = ?, crea
 	}
 	return nil
 }
+
+// func (r *bookRepository) FindListByID(ctx context.Context) ([]*model.Book, error) {
+// 	const q = "SELECT book_id, book_name, author, created_at FROM book"
+// }
