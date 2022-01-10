@@ -20,6 +20,9 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = db.Close()
+	}()
 	if err := dbutil.ExecSQLFile(context.Background(), db, "./migration/sql/createTable.sql"); err != nil {
 		return err
 	}
