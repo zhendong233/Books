@@ -21,11 +21,8 @@ jobs:
     - name: Build Docker
       run: docker-compose up -d
 
-    - name: actions-setup-mysql
-      uses: shogo82148/actions-setup-mysql@v1.5.0
-      with:
-        mysql-version: '8.0'
-    - run: mysql -h localhost -P 3309 -uroot -p123456 -Dbooks<./migration/sql/createTable.sql
+    - name: Migration
+      run: go run ./migration/main.go
 
     - name: Build
       run: go build -v ./...
