@@ -18,6 +18,9 @@ jobs:
       with:
         go-version: 1.17
 
+    - name: Build Docker
+      run: docker-compose up -d
+
     - name: Build
       run: go build -v ./...
 
