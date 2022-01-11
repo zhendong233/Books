@@ -21,9 +21,6 @@ jobs:
     - name: Build Docker
       run: docker-compose up -d books-mysql
 
-    - name: Migration
-      run: go run ./migration
-
     - name: Build
       run: go build -v ./...
 
