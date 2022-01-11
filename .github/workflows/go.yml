@@ -19,10 +19,10 @@ jobs:
         go-version: 1.17
 
     - name: Build Docker
-      run: docker-compose up -d
+      run: docker-compose up -d books-mysql
 
     - name: Migration
-      run: go run ./migration/main.go
+      run: go run ./migration
 
     - name: Build
       run: go build -v ./...
