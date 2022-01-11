@@ -13,9 +13,12 @@ var (
 )
 
 func NewDB() (*sql.DB, error) {
-	d, err := sql.Open("mysql", ConnStr)
+	db, err := sql.Open("mysql", ConnStr)
 	if err != nil {
 		return nil, err
 	}
-	return d, nil
+	db.SetConnMaxLifetime(5)
+	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(16)
+	return db, nil
 }

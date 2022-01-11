@@ -55,7 +55,7 @@ func Test_FindByID(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "ok no this book",
+			name:    "ok: no this book",
 			bookID:  "123456",
 			want:    nil,
 			wantErr: true,
