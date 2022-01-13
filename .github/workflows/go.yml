@@ -24,5 +24,8 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: Create Table
+      run: go run ./migration
+
     - name: Test
       run: go test -v ./...
