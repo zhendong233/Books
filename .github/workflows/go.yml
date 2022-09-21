@@ -21,11 +21,11 @@ jobs:
     - name: Build Docker
       run: docker-compose up -d books-mysql
 
-    - name: Build
-      run: go build -v ./...
-
     - name: Create Table
       run: go run ./migration
+
+    - name: Build
+      run: go build -v ./...
 
     - name: Test
       run: go test -v ./...
