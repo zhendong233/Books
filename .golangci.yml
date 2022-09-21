@@ -1,0 +1,71 @@
+linters:
+  enable-all: true
+  disable:
+    - interfacer
+    - maligned
+    - gochecknoglobals
+    - gochecknoinits
+    - goconst
+    - depguard
+    - stylecheck
+    - godox
+    - wsl
+    - gomnd
+    - testpackage
+    - godot
+    - goerr113
+    - nolintlint
+    - exhaustive
+    - sqlclosecheck
+    - nlreturn
+    - gci
+    - exhaustivestruct
+    - wrapcheck
+    - paralleltest
+    - forbidigo
+    - ifshort
+    - cyclop
+    - revive
+    - scopelint
+    - golint
+    - wastedassign
+    - ireturn
+    - varnamelen
+    - contextcheck
+    - maintidx
+    - forcetypeassert
+    - errchkjson
+    - containedctx
+    - exhaustruct
+    - nonamedreturns
+    - nosnakecase
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  gocyclo:
+    min-complexity: 20
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 140
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  lll:
+    line-length: 200
+  funlen:
+    lines: 70
+    statements: 40
+  goimports:
+    local-prefixes: github.com/zhendong233/Books
+  gocognit:
+    min-complexity: 22
+  nestif:
+    min-complexity: 8
+  nilnil:
+    checked-types:
+      - func
+      - iface
+      - map
+      - chan

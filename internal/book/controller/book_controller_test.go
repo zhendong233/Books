@@ -24,6 +24,8 @@ type testController struct {
 }
 
 func newTestController(t *testing.T) *testController {
+	t.Helper()
+
 	ctrl := gomock.NewController(t)
 	t.Cleanup(func() {
 		ctrl.Finish()

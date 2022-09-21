@@ -17,6 +17,6 @@ func Test_SetUpContext(t *testing.T) {
 	}
 	ctx = SetUpContextWithDefault()
 	if userID := session.UserID(ctx); userID != books.DefaultAdmin {
-		t.Fatalf("set up context witn default fail got userID= %s", userID)
+		t.Fatalf("set up context with default fail got userID= %s", userID)
 	}
 }

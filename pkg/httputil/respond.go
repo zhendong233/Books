@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/rs/zerolog/log"
+
 	"github.com/zhendong233/Books/pkg/bookserr"
 )
 
@@ -22,7 +23,7 @@ func RespondError(ctx context.Context, w http.ResponseWriter, err error) {
 		respondJSON(ctx, w, status, booksErr)
 		return
 	}
-	var unexpectedError = bookserr.New(err, bookserr.Unexpected, err.Error())
+	unexpectedError := bookserr.New(err, bookserr.Unexpected, err.Error())
 	log.Error().Err(booksErr)
 	respondJSON(ctx, w, http.StatusInternalServerError, unexpectedError)
 }

@@ -24,6 +24,8 @@ type testService struct {
 }
 
 func newTestService(t *testing.T) *testService {
+	t.Helper()
+
 	ctrl := gomock.NewController(t)
 	ctx := testutil.SetUpContextWithDefault()
 	db, mockDB := testutil.NewSQLMock(t)
