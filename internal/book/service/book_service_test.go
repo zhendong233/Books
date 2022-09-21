@@ -8,6 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+
 	"github.com/zhendong233/Books/internal/book/mock/mock_repository"
 	"github.com/zhendong233/Books/internal/book/model"
 	uuid "github.com/zhendong233/Books/pkg/mockableuuid"
@@ -23,6 +24,8 @@ type testService struct {
 }
 
 func newTestService(t *testing.T) *testService {
+	t.Helper()
+
 	ctrl := gomock.NewController(t)
 	ctx := testutil.SetUpContextWithDefault()
 	db, mockDB := testutil.NewSQLMock(t)

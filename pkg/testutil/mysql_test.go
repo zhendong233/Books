@@ -15,7 +15,7 @@ func Test_SetFakeTimeForMysql(t *testing.T) {
 
 	SetFakeTimeForMysql(t, db, TestTime)
 	var actual time.Time
-	//创建一个默认的ctx
+	// 创建一个默认的ctx
 	ctx := context.Background()
 	err := db.QueryRowContext(ctx, "SELECT NOW()").Scan(&actual)
 	if err != nil {

@@ -18,6 +18,8 @@ type testRepository struct {
 }
 
 func newTestRepository(t *testing.T) *testRepository {
+	t.Helper()
+
 	if testing.Short() {
 		t.Skip()
 	}

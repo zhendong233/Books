@@ -13,10 +13,8 @@ type booksError struct {
 	Msg     string `json:"msg"`
 }
 
-var (
-	// 判断struct是否实现了interface没实现的话编译时会报错
-	_ Error = (*booksError)(nil)
-)
+// 判断struct是否实现了interface没实现的话编译时会报错
+var _ Error = (*booksError)(nil)
 
 func New(err error, code Code, message string) *booksError {
 	return &booksError{

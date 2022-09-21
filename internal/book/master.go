@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -48,7 +49,13 @@ func (m *master) run() error {
 	})
 
 	fmt.Println("Server listen at :8005")
-	err := http.ListenAndServe(":8005", r)
+	server := &http.Server{
+		Addr:              ":8005",
+		ReadHeaderTimeout: 3 * time.Second,
+		Handler:           r,
+	}
+
+	err := server.ListenAndServe()
 	if err != nil {
 		return err
 	}
