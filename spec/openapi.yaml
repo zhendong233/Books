@@ -1,0 +1,138 @@
+openapi: "3.0.3"
+info:
+  title: Books REST API
+  version: 1.0.0
+paths:
+  /books/book:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookRequest"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookError"
+  /books/book/{bookId}:
+    get:
+      parameters:
+        - name: "bookId"
+          in: "path"
+          required: true
+          schema:
+            $ref: "#/components/schemas/uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          description: "Resource Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookError"
+    put:
+      parameters:
+        - name: "bookId"
+          in: "path"
+          required: true
+          schema:
+            $ref: "#/components/schemas/uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookRequest"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookError"
+        "404":
+          description: "Resource Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookError"
+components:
+  schemas:
+    uuid:
+      type: string
+      maxLength: 36
+      example: "38acd29f-453f-4d4b-b652-e19ea73c7346"
+    datetime:
+      type: string
+      description: "RFC3336形式の時刻"
+      format: date-time
+      example: "2018-09-22T12:42:31.123Z"
+    BookError:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            エラーの種別をコードで示す。
+          enum:
+            - books-001
+            - books-002
+            - books-003
+            - books-004
+            - books-005
+            - books-006
+          default: books-001
+        message:
+          type: string
+          example: "error message"
+    Book:
+      type: object
+      properties:
+        bookId:
+          $ref: "#/components/schemas/uuid"
+        bookName:
+          type: string
+          example: book
+        author:
+          type: string
+          example: author
+        createdAt:
+          $ref: "#/components/schemas/datetime"
+      required:
+        - bookId
+        - bookName
+        - author
+        - createdAt
+    BookRequest:
+      type: object
+      properties:
+        bookName:
+          type: string
+          example: book
+        author:
+          type: string
+          example: author
+      required:
+        - bookName
+        - author
