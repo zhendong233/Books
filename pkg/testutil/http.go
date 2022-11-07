@@ -3,7 +3,6 @@ package testutil
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,7 +16,7 @@ func AssertResponseBody(t *testing.T, want interface{}, body io.Reader) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	b, err := ioutil.ReadAll(body)
+	b, err := io.ReadAll(body)
 	if err != nil {
 		t.Fatal(err)
 	}
