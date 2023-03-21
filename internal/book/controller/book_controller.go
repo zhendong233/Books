@@ -10,6 +10,7 @@ import (
 
 	"github.com/zhendong233/Books/internal/book/model"
 	"github.com/zhendong233/Books/internal/book/service"
+	"github.com/zhendong233/Books/pkg/bookserr"
 	"github.com/zhendong233/Books/pkg/httputil"
 )
 
@@ -44,7 +45,7 @@ func (c *bookController) CreateBook(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var book model.Book
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
-		httputil.RespondError(ctx, w, err)
+		httputil.RespondError(ctx, w, bookserr.New(err, bookserr.BadRequest, "bad request"))
 		return
 	}
 	req, err := c.bs.CreateBook(ctx, &book)
