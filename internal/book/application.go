@@ -9,43 +9,43 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/rs/zerolog/log"
 
+	"github.com/zhendong233/Books/pkg/logutil"
 	booksmiddle "github.com/zhendong233/Books/pkg/middleware"
 )
 
-type Master interface {
+type Application interface {
 	Run()
 }
 
-type master struct {
+type application struct {
 	db *sql.DB
 	r  BookRouter
 }
 
-func NewMaster(db *sql.DB, r BookRouter) Master {
-	return &master{
+func NewApplication(db *sql.DB, r BookRouter) Application {
+	return &application{
 		r:  r,
 		db: db,
 	}
 }
 
-func (m *master) Run() {
-	if err := m.run(); err != nil {
-		log.Print(err)
+func (a *application) Run() {
+	if err := a.run(); err != nil {
+		logutil.Logger.Error().Err(err).Caller().Send()
 		os.Exit(-1)
 	}
 }
 
-func (m *master) run() error {
+func (a *application) run() error {
 	defer func() {
-		_ = m.db.Close()
+		_ = a.db.Close()
 	}()
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
 	r.Route("/", func(rt chi.Router) {
-		rt.Mount("/books", booksmiddle.SetFakeSession(m.r.Handler()))
+		rt.Mount("/books", booksmiddle.SetFakeSession(a.r.Handler()))
 	})
 
 	fmt.Println("Server listen at :8005")
