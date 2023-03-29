@@ -6,25 +6,25 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/zhendong233/Books/pkg/bookserr"
+	"github.com/zhendong233/Books/pkg/logutil"
 )
 
 func RespondError(ctx context.Context, w http.ResponseWriter, err error) {
 	var booksErr bookserr.Error
+
 	if errors.As(err, &booksErr) {
 		status := ErrorToStatus(booksErr.Code())
 		if 500 <= status {
-			log.Error().Err(booksErr)
+			logutil.Logger.Error().Err(booksErr).Send()
 		} else {
-			log.Warn().Err(booksErr)
+			logutil.Logger.Warn().Err(booksErr).Send()
 		}
 		respondJSON(ctx, w, status, booksErr)
 		return
 	}
 	unexpectedError := bookserr.New(err, bookserr.Unexpected, err.Error())
-	log.Error().Err(booksErr)
+	logutil.Logger.Error().Err(booksErr).Caller().Send()
 	respondJSON(ctx, w, http.StatusInternalServerError, unexpectedError)
 }
 
@@ -41,7 +41,7 @@ func respondJSON(ctx context.Context, w http.ResponseWriter, status int, payload
 	}
 	w.WriteHeader(status)
 	if _, err := w.Write(b); err != nil {
-		log.Error().Err(err)
+		logutil.Logger.Error().Err(err).Caller().Send()
 	}
 }
 

@@ -1,39 +1,30 @@
 package logutil
 
-type LogLevel uint64
+import (
+	"fmt"
+	"os"
+	"time"
 
-const (
-	DEBUG LogLevel = iota
-	INFO
-	WARNING
-	ERROR
-	FATAL
+	"github.com/rs/zerolog"
+
+	"github.com/zhendong233/Books/pkg/envutil"
 )
 
-var LevelMap = map[string]LogLevel{
-	"DEBUG":   DEBUG,
-	"INFO":    INFO,
-	"WARNING": WARNING,
-	"ERROR":   ERROR,
-	"FATAL":   FATAL,
+var Logger zerolog.Logger
+
+func init() {
+	Logger = newLogger()
 }
 
-func parseLogLevel(msg string) LogLevel {
-	logLevel, ok := LevelMap[msg]
-	if !ok {
-		return ERROR
+func newLogger() zerolog.Logger {
+	outputFile := envutil.GetBool("OUTPUT_LOG_FILE", false)
+	if outputFile {
+		now := time.Now().Format("2006-01-02")
+		f, err := os.OpenFile(fmt.Sprintf("./log/log_%s.txt", now), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0o666)
+		if err != nil {
+			panic(err)
+		}
+		return zerolog.New(f).With().Timestamp().Logger()
 	}
-	return logLevel
-}
-
-type Logger interface {
-	Debug(msg string)
-	INFO(msg string)
-	WARNING(msg string)
-	ERROR(msg string)
-	FATAL(msg string)
-}
-
-func NewLogger(level string) Logger {
-	return newstLogger(level)
+	return zerolog.New(os.Stdout).With().Timestamp().Logger()
 }
