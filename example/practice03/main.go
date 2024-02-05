@@ -28,9 +28,8 @@ func main() {
 	for i := 0; i < 10; i++ {
 		job <- i
 	}
-	close(job)
+	// close(job)
 	for i := 0; i < 10; i++ {
 		fmt.Println(<-result)
 	}
-	wg.Wait()
 }

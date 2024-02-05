@@ -41,7 +41,7 @@ func (o *openAPITester) getRoutes(t *testing.T, pathPrefix string) []*Route {
 	t.Helper()
 
 	routes := make([]*Route, 0)
-	for path, pathItem := range o.doc.Paths {
+	for path, pathItem := range o.doc.Paths.Map() {
 		if !strings.HasPrefix(path, pathPrefix) {
 			continue
 		}

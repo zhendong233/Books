@@ -1,2 +1,6 @@
 .DS_Store
 /log
+
+#air产生的文件
+tmp
+

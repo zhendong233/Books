@@ -6,9 +6,26 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/zhendong233/Books/pkg/logutil"
 )
+
+func StatCost() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		c.Set("name", "小王子") // 可以通过c.Set在请求上下文中设置值，后续的处理函数能够取到该值
+		// 调用该请求的剩余处理程序
+		c.Next()
+		// 不调用该请求的剩余处理程序
+		// c.Abort()
+		// 计算耗时
+		cost := time.Since(start)
+		logutil.Logger.Info().Msgf("cost: %v", cost)
+	}
+}
 
 // nolint
 func main() {
@@ -16,7 +33,7 @@ func main() {
 	// hello world
 	r.GET("/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "hello",
+			"message": "hello world",
 		})
 	})
 	// query使用练习
@@ -112,6 +129,7 @@ func main() {
 	// 路由组：我们可以将拥有共同URL前缀的路由划分为一个路由组。习惯性一对{}包裹同组的路由，这只是为了看着清晰，你用不用{}包裹功能上没什么区别。
 	shopGroup := r.Group("/shop")
 	{
+		shopGroup.Use(StatCost())
 		shopGroup.GET("/name", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"name": "nike"})
 		})
